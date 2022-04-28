@@ -6,7 +6,6 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
-// const mongoose = require("mongoose");
 
 app.use(cors());
 app.use(express.json());
