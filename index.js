@@ -7,6 +7,7 @@ const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 
 async function run() {
   try {
@@ -30,9 +31,24 @@ async function run() {
 
     // Add a new car
     app.post("/cars", async (req, res) => {
-      const car = req.body;
+      const name = req.body.name;
+      const description = req.body.description;
+      const price = req.body.price;
+      const quantity = req.body.quantity;
+      const supplier = req.body.supplier;
+      const pic = req.files.image;
+      const encodedPic = pic.data.toString("base64");
+      const imageBuffer = Buffer.from(encodedPic, "base64");
+      const car = {
+        name,
+        description,
+        price,
+        quantity,
+        supplier,
+        image: imageBuffer,
+      };
       const newCar = await carsCollection.insertOne(car);
-      res.send(newCar.ops[0]);
+      res.send(newCar);
     });
 
     // Update a car
@@ -41,7 +57,7 @@ async function run() {
       const car = req.body;
       const filter = { _id: ObjectId(carId) };
       const options = { upsert: true };
-      const updatedCar = {
+      const updatedInfo = {
         $set: {
           name: car.name,
           image: car.image,
@@ -52,12 +68,20 @@ async function run() {
           supplier: car.supplier,
         },
       };
-      const result = await carsCollection.updateOne(
+      const updatedCar = await carsCollection.updateOne(
         filter,
         options,
-        updatedCar
+        updatedInfo
       );
-      res.send(result);
+      res.send(updatedCar);
+    });
+
+    // Delete a car
+    app.delete("/cars/:id", async (req, res) => {
+      const carId = req.params.id;
+      const query = { _id: ObjectId(carId) };
+      const deletedCar = await carsCollection.deleteOne(query);
+      res.send(deletedCar);
     });
   } finally {
     // client.close();
