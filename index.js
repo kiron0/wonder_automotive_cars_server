@@ -10,8 +10,8 @@ app.use(express.json());
 
 async function run() {
   try {
-//     await client.connect();
-//     const carsCollection = client.db("carsCollection").collection("cars");
+    //     await client.connect();
+    //     const carsCollection = client.db("carsCollection").collection("cars");
 
     // Fetch all cars
     app.get("/cars", async (req, res) => {
@@ -19,7 +19,13 @@ async function run() {
       const cars = await carsCollection.find(query).toArray();
       res.send(cars);
     });
-
+    // Fetch a car by id
+    app.get("/cars/:id", async (req, res) => {
+      const carId = req.params.id;
+      const query = { _id: ObjectId(carId) };
+      const car = await carsCollection.findOne(query);
+      res.send(car);
+    });
   } finally {
     // client.close();
   }
