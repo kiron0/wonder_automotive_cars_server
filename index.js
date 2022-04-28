@@ -4,7 +4,7 @@ require("dotenv").config();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 // const mongoose = require("mongoose");
 
@@ -13,7 +13,11 @@ app.use(express.json());
 app.use(fileUpload());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cars-warehouse.noktp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
 
 async function run() {
   try {
@@ -67,8 +71,7 @@ async function run() {
         $set: {
           name: car.name,
           image: car.image,
-          description: car,
-          description,
+          description: car.description,
           price: car.price,
           quantity: car.quantity,
           supplier: car.supplier,
