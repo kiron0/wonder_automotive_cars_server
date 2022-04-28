@@ -34,6 +34,31 @@ async function run() {
       const newCar = await carsCollection.insertOne(car);
       res.send(newCar.ops[0]);
     });
+
+    // Update a car
+    app.put("/cars/:id", async (req, res) => {
+      const carId = req.params.id;
+      const car = req.body;
+      const filter = { _id: ObjectId(carId) };
+      const options = { upsert: true };
+      const updatedCar = {
+        $set: {
+          name: car.name,
+          image: car.image,
+          description: car,
+          description,
+          price: car.price,
+          quantity: car.quantity,
+          supplier: car.supplier,
+        },
+      };
+      const result = await carsCollection.updateOne(
+        filter,
+        options,
+        updatedCar
+      );
+      res.send(result);
+    });
   } finally {
     // client.close();
   }
