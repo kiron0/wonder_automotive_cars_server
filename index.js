@@ -19,12 +19,20 @@ async function run() {
       const cars = await carsCollection.find(query).toArray();
       res.send(cars);
     });
+
     // Fetch a car by id
     app.get("/cars/:id", async (req, res) => {
       const carId = req.params.id;
       const query = { _id: ObjectId(carId) };
       const car = await carsCollection.findOne(query);
       res.send(car);
+    });
+
+    // Add a new car
+    app.post("/cars", async (req, res) => {
+      const car = req.body;
+      const newCar = await carsCollection.insertOne(car);
+      res.send(newCar.ops[0]);
     });
   } finally {
     // client.close();
