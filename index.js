@@ -101,11 +101,11 @@ run();
 app.get("/", (req, res) => {
   res.send({
     products: {
-      allProducts: "https://car-management.herokuapp.com/cars",
+      allProducts: "https://cars-warehouse.herokuapp.com/cars",
       specificProduct: {
-        pattern: "https://car-management.herokuapp.com/cars/{_id}",
+        pattern: "https://cars-warehouse.herokuapp.com/cars/{_id}",
         example:
-          "https://car-management.herokuapp.com/cars/6263a3f86375db50d03bd09a",
+          "https://cars-warehouse.herokuapp.com/cars/6263a3f86375db50d03bd09a",
       },
     },
     maintainer: "Toufiq Hasan Kiron <kiron@mygsuite.co>",
