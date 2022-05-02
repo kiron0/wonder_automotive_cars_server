@@ -40,6 +40,7 @@ async function run() {
 
     // Add a new car
     app.post("/cars", async (req, res) => {
+      const email = req.body.email;
       const name = req.body.name;
       const description = req.body.description;
       const price = req.body.price;
@@ -49,6 +50,7 @@ async function run() {
       const encodedPic = pic.data.toString("base64");
       const imageBuffer = Buffer.from(encodedPic, "base64");
       const car = {
+        email,
         name,
         description,
         price,
