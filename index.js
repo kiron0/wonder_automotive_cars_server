@@ -86,12 +86,21 @@ async function run() {
       res.send(updatedCar);
     });
 
+    // Delete Event Information for user
+    // app.delete('/cars/:id"', (req, res) => {
+    //   carsCollection
+    //     .deleteOne({ _id: ObjectId(req.params.id) })
+    //     .then((result) => {
+    //       res.send(result.deletedCount > 0);
+    //     });
+    // });
+
     // Delete a car
     app.delete("/cars/:id", async (req, res) => {
       const carId = req.params.id;
       const query = { _id: ObjectId(carId) };
       const deletedCar = await carsCollection.deleteOne(query);
-      res.send(deletedCar);
+      res.send(deletedCar.deletedCount > 0);
     });
   } finally {
     // client.close();
