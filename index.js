@@ -66,24 +66,22 @@ async function run() {
 
     // Add a new car
     app.post("/cars", async (req, res) => {
-      const body = req.body;
-      // const email = req.body.email;
-      // const name = req.body.name;
-      // const description = req.body.description;
-      // const price = req.body.price;
-      // const quantity = req.body.quantity;
-      // const supplier = req.body.supplier;
+      const email = req.body.email;
+      const name = req.body.name;
+      const description = req.body.description;
+      const price = req.body.price;
+      const quantity = req.body.quantity;
+      const supplier = req.body.supplier;
       const pic = req.files.image;
       const encodedPic = pic.data.toString("base64");
       const imageBuffer = Buffer.from(encodedPic, "base64");
       const car = {
-        // email,
-        // name,
-        // description,
-        // price,
-        // quantity,
-        // supplier,
-        body,
+        email,
+        name,
+        description,
+        price,
+        quantity,
+        supplier,
         image: imageBuffer,
       };
       const newCar = await carsCollection.insertOne(car);
