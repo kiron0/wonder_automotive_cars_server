@@ -112,7 +112,7 @@ async function run() {
       res.send(updatedCar);
     });
 
-    // Delete a car
+    // delete a car
     app.delete("/cars/:id", async (req, res) => {
       const carId = req.params.id;
       const query = { _id: ObjectId(carId) };
@@ -124,15 +124,16 @@ async function run() {
       const decodedEmail = req.decoded.email;
       const email = req.query.email;
       if (email === decodedEmail) {
-        const query = { email: email };
-        const cursor = myCollection.find(query);
-        const myItems = await cursor.toArray();
+        const myItems = await myCollection.find({ email: email }).toArray();
         res.send(myItems);
       } else {
         res.status(403).send({ message: "forbidden access" });
       }
     });
+
+    // post a new item to my-items
     app.post("/my-items", async (req, res) => {
+      const decodedEmail = req.decoded.email;
       const email = req.body.email;
       const name = req.body.name;
       const description = req.body.description;
@@ -142,7 +143,7 @@ async function run() {
       const pic = req.files.image;
       const encodedPic = pic.data.toString("base64");
       const imageBuffer = Buffer.from(encodedPic, "base64");
-      const inventory = {
+      const myItem = {
         email,
         name,
         description,
@@ -151,9 +152,36 @@ async function run() {
         supplier,
         image: imageBuffer,
       };
-      const result = await myCollection.insertOne(inventory);
-      res.send(result);
+      if (email === decodedEmail) {
+        const newMyItem = await myCollection.insertOne(myItem);
+        res.send(newMyItem);
+      } else {
+        res.status(403).send({ message: "forbidden access" });
+      }
     });
+
+    // app.post("/my-items", async (req, res) => {
+    //   const email = req.body.email;
+    //   const name = req.body.name;
+    //   const description = req.body.description;
+    //   const price = req.body.price;
+    //   const quantity = req.body.quantity;
+    //   const supplier = req.body.supplier;
+    //   const pic = req.files.image;
+    //   const encodedPic = pic.data.toString("base64");
+    //   const imageBuffer = Buffer.from(encodedPic, "base64");
+    //   const inventory = {
+    //     email,
+    //     name,
+    //     description,
+    //     price,
+    //     quantity,
+    //     supplier,
+    //     image: imageBuffer,
+    //   };
+    //   const result = await myCollection.insertOne(inventory);
+    //   res.send(result);
+    // });
   } finally {
     // client.close();
   }
