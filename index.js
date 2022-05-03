@@ -67,12 +67,12 @@ async function run() {
     // Add a new car
     app.post("/cars", async (req, res) => {
       const body = req.body;
-      const email = req.body.email;
-      const name = req.body.name;
-      const description = req.body.description;
-      const price = req.body.price;
-      const quantity = req.body.quantity;
-      const supplier = req.body.supplier;
+      // const email = req.body.email;
+      // const name = req.body.name;
+      // const description = req.body.description;
+      // const price = req.body.price;
+      // const quantity = req.body.quantity;
+      // const supplier = req.body.supplier;
       const pic = req.files.image;
       const encodedPic = pic.data.toString("base64");
       const imageBuffer = Buffer.from(encodedPic, "base64");
@@ -133,6 +133,11 @@ async function run() {
       } else {
         res.status(403).send({ message: "forbidden access" });
       }
+    });
+    app.post("/my-items", async (req, res) => {
+      const order = req.body;
+      const result = await myCollection.insertOne(order);
+      res.send(result);
     });
   } finally {
     // client.close();
