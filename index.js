@@ -159,29 +159,6 @@ async function run() {
         res.status(403).send({ message: "forbidden access" });
       }
     });
-
-    // app.post("/my-items", async (req, res) => {
-    //   const email = req.body.email;
-    //   const name = req.body.name;
-    //   const description = req.body.description;
-    //   const price = req.body.price;
-    //   const quantity = req.body.quantity;
-    //   const supplier = req.body.supplier;
-    //   const pic = req.files.image;
-    //   const encodedPic = pic.data.toString("base64");
-    //   const imageBuffer = Buffer.from(encodedPic, "base64");
-    //   const inventory = {
-    //     email,
-    //     name,
-    //     description,
-    //     price,
-    //     quantity,
-    //     supplier,
-    //     image: imageBuffer,
-    //   };
-    //   const result = await myCollection.insertOne(inventory);
-    //   res.send(result);
-    // });
   } finally {
     // client.close();
   }
