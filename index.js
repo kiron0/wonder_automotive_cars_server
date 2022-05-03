@@ -38,6 +38,7 @@ async function run() {
   try {
     await client.connect();
     const carsCollection = client.db("carsCollection").collection("cars");
+    const myCollection = client.db("carsCollection").collection("myCars");
 
     // AUTH
     app.post("/login", async (req, res) => {
@@ -65,6 +66,7 @@ async function run() {
 
     // Add a new car
     app.post("/cars", async (req, res) => {
+      const body = req.body;
       const email = req.body.email;
       const name = req.body.name;
       const description = req.body.description;
@@ -75,12 +77,13 @@ async function run() {
       const encodedPic = pic.data.toString("base64");
       const imageBuffer = Buffer.from(encodedPic, "base64");
       const car = {
-        email,
-        name,
-        description,
-        price,
-        quantity,
-        supplier,
+        // email,
+        // name,
+        // description,
+        // price,
+        // quantity,
+        // supplier,
+        body,
         image: imageBuffer,
       };
       const newCar = await carsCollection.insertOne(car);
@@ -111,21 +114,12 @@ async function run() {
       res.send(updatedCar);
     });
 
-    // Delete Event Information for user
-    // app.delete('/cars/:id"', (req, res) => {
-    //   carsCollection
-    //     .deleteOne({ _id: ObjectId(req.params.id) })
-    //     .then((result) => {
-    //       res.send(result.deletedCount > 0);
-    //     });
-    // });
-
     // Delete a car
     app.delete("/cars/:id", async (req, res) => {
       const carId = req.params.id;
       const query = { _id: ObjectId(carId) };
       const deletedCar = await carsCollection.deleteOne(query);
-      res.send(deletedCar.deletedCount > 0);
+      res.send(deletedCar);
     });
 
     app.get("/my-items", verifyJWT, async (req, res) => {
@@ -133,7 +127,7 @@ async function run() {
       const email = req.query.email;
       if (email === decodedEmail) {
         const query = { email: email };
-        const cursor = carsCollection.find(query);
+        const cursor = myCollection.find(query);
         const myItems = await cursor.toArray();
         res.send(myItems);
       } else {
