@@ -159,6 +159,22 @@ async function run() {
         res.status(403).send({ message: "forbidden access" });
       }
     });
+
+    // delete a my-item
+    app.delete("/my-items/:id", async (req, res) => {
+      const decodedEmail = req.decoded.email;
+      const myItemId = req.params.id;
+      const query = { _id: ObjectId(myItemId) };
+      const myItem = await myCollection.findOne(query);
+      if (myItem.email === decodedEmail) {
+        const deletedMyItem = await myCollection.deleteOne(query);
+        res.send(deletedMyItem);
+      } else {
+        res.status(403).send({ message: "forbidden access" });
+      }
+    });
+
+
   } finally {
     // client.close();
   }
