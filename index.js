@@ -38,7 +38,6 @@ async function run() {
   try {
     await client.connect();
     const carsCollection = client.db("carsCollection").collection("cars");
-    const myCollection = client.db("carsCollection").collection("myCars");
 
     // AUTH
     app.post("/login", async (req, res) => {
@@ -112,49 +111,12 @@ async function run() {
       res.send(updatedCar);
     });
 
-    // delete a car
-    app.delete("/cars/:id", async (req, res) => {
-      const carId = req.params.id;
-      const query = { _id: ObjectId(carId) };
-      const deletedCar = await carsCollection.deleteOne(query);
-      res.send(deletedCar);
-    });
-
     app.get("/my-items", verifyJWT, async (req, res) => {
       const decodedEmail = req.decoded.email;
       const email = req.query.email;
       if (email === decodedEmail) {
-        const myItems = await myCollection.find({ email: email }).toArray();
+        const myItems = await carsCollection.find({ email: email }).toArray();
         res.send(myItems);
-      } else {
-        res.status(403).send({ message: "forbidden access" });
-      }
-    });
-
-    // post a new item to my-items
-    app.post("/my-items", async (req, res) => {
-      const decodedEmail = req.decoded.email;
-      const email = req.body.email;
-      const name = req.body.name;
-      const description = req.body.description;
-      const price = req.body.price;
-      const quantity = req.body.quantity;
-      const supplier = req.body.supplier;
-      const pic = req.files.image;
-      const encodedPic = pic.data.toString("base64");
-      const imageBuffer = Buffer.from(encodedPic, "base64");
-      const myItem = {
-        email,
-        name,
-        description,
-        price,
-        quantity,
-        supplier,
-        image: imageBuffer,
-      };
-      if (email === decodedEmail) {
-        const newMyItem = await myCollection.insertOne(myItem);
-        res.send(newMyItem);
       } else {
         res.status(403).send({ message: "forbidden access" });
       }
@@ -165,9 +127,9 @@ async function run() {
       const decodedEmail = req.decoded.email;
       const myItemId = req.params.id;
       const query = { _id: ObjectId(myItemId) };
-      const myItem = await myCollection.findOne(query);
+      const myItem = await carsCollection.findOne(query);
       if (myItem.email === decodedEmail) {
-        const deletedMyItem = await myCollection.deleteOne(query);
+        const deletedMyItem = await carsCollection.deleteOne(query);
         res.send(deletedMyItem);
       } else {
         res.status(403).send({ message: "forbidden access" });
