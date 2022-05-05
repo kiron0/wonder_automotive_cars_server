@@ -4,13 +4,11 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const fileUpload = require("express-fileupload");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 
 app.use(cors());
 app.use(express.json());
-app.use(fileUpload());
 
 function verifyJWT(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -65,24 +63,7 @@ async function run() {
 
     // Add a new car
     app.post("/cars", async (req, res) => {
-      const email = req.body.email;
-      const name = req.body.name;
-      const description = req.body.description;
-      const price = req.body.price;
-      const quantity = req.body.quantity;
-      const supplier = req.body.supplier;
-      const pic = req.files.image;
-      const encodedPic = pic.data.toString("base64");
-      const imageBuffer = Buffer.from(encodedPic, "base64");
-      const car = {
-        email,
-        name,
-        description,
-        price,
-        quantity,
-        supplier,
-        image: imageBuffer,
-      };
+      const car = req.body;
       const newCar = await carsCollection.insertOne(car);
       res.send(newCar);
     });
@@ -91,24 +72,17 @@ async function run() {
     app.put("/cars/:id", async (req, res) => {
       const carId = req.params.id;
       const car = req.body;
-      const filter = { _id: ObjectId(carId) };
-      const options = { upsert: true };
-      const updatedInfo = {
-        $set: {
-          name: car.name,
-          image: car.image,
-          description: car.description,
-          price: car.price,
-          quantity: car.quantity,
-          supplier: car.supplier,
-        },
-      };
-      const updatedCar = await carsCollection.updateOne(
-        filter,
-        options,
-        updatedInfo
-      );
+      const query = { _id: ObjectId(carId) };
+      const updatedCar = await carsCollection.updateOne(query, { $set: car });
       res.send(updatedCar);
+    });
+
+    // Delete a car
+    app.delete("/cars/:id", async (req, res) => {
+      const carId = req.params.id;
+      const query = { _id: ObjectId(carId) };
+      const deletedCar = await carsCollection.deleteOne(query);
+      res.send(deletedCar);
     });
 
     app.get("/my-items", verifyJWT, async (req, res) => {
@@ -121,22 +95,6 @@ async function run() {
         res.status(403).send({ message: "forbidden access" });
       }
     });
-
-    // delete a my-item
-    app.delete("/my-items/:id", async (req, res) => {
-      const decodedEmail = req.decoded.email;
-      const myItemId = req.params.id;
-      const query = { _id: ObjectId(myItemId) };
-      const myItem = await carsCollection.findOne(query);
-      if (myItem.email === decodedEmail) {
-        const deletedMyItem = await carsCollection.deleteOne(query);
-        res.send(deletedMyItem);
-      } else {
-        res.status(403).send({ message: "forbidden access" });
-      }
-    });
-
-
   } finally {
     // client.close();
   }
