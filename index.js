@@ -47,14 +47,14 @@ async function run() {
     });
 
     // Fetch all cars
-    app.get("/cars", async (req, res) => {
+    app.get("/cars", verifyJWT, async (req, res) => {
       const query = {};
       const cars = await carsCollection.find(query).toArray();
       res.send(cars);
     });
 
     // Fetch a car by id
-    app.get("/cars/:id", async (req, res) => {
+    app.get("/cars/:id", verifyJWT, async (req, res) => {
       const carId = req.params.id;
       const query = { _id: ObjectId(carId) };
       const car = await carsCollection.findOne(query);
